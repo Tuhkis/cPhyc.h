@@ -26,14 +26,13 @@
 #pragma once
 #define CPHYC_H
 
-
 typedef struct {
 	int x, y, w, h;
 } Rect;
 
 #define collideRect(rect1, rect2) (rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h)
 
-void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely) {
+static void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely) {
 	Rect r = *rect;
 
 	r.x += velx;
