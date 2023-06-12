@@ -31,6 +31,9 @@ typedef struct {
 
 #define collideRect(rect1, rect2) (rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h)
 
+static void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely);	
+#ifdef CPHYC_IMPL
+
 static void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely) {
 	Rect r = *rect;
 
@@ -56,5 +59,6 @@ static void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int
 
 	*rect = r;
 }
+#endif // CPHYC_IMPL
 #endif // CPHYC_H
 

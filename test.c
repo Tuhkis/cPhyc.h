@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#define CPHYC_IMPL
 #include "cPhyc.h"
 
 int main() {
