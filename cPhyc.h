@@ -3,8 +3,6 @@
  * Author: Nico Lindström
  * Copyright: (c) 2022 Nico Lindström 
  * 
- * NOTE: Depends on stdTuhkis (https://github.com/Tuhkis/stdTuhkis)
- *
  * This is a header only library for AABB based physics
  *
  *
@@ -24,6 +22,7 @@
 */
 
 #pragma once
+#ifndef CPHYC_H
 #define CPHYC_H
 
 typedef struct {
@@ -57,4 +56,5 @@ static void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int
 
 	*rect = r;
 }
+#endif // CPHYC_H
 
