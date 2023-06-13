@@ -10,6 +10,8 @@ int main() {
 	for ( int i = 0; i < 10; i++ ) {
 		moveAndCollide(&r1, r2, 1, 16, 0);
 		printf("X Pos: %d\n", r1.x);
+		if (isOnWall(r1, r2, 1))
+			printf("Is on wall!\n");
 	}
 
 	return 0;
