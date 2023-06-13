@@ -28,7 +28,7 @@
  *     isOnWall(rect, tiles, tilesLen)
  *       Returns a bool if the rect is right next to any of the tiles.
  *
-*/
+ */
 
 #pragma once
 #ifndef CPHYC_H
