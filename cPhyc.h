@@ -34,21 +34,29 @@
 #ifndef CPHYC_H
 #define CPHYC_H
 
-#include <stdbool.h>
-
-typedef struct {
-	int x, y, w, h;
-} Rect;
-
 #define collideRect(rect1, rect2) rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h
 
-void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely);	
-bool isOnFloor(Rect rect, Rect tiles[], int tilesLen);
-bool isOnCeiling(Rect rect, Rect tiles[], int tilesLen);
-bool isOnWall(Rect rect, Rect tiles[], int tilesLen);
+#ifdef __cplusplus
+#define T(T) T
+namespace cph {
+extern "C" {
+#else
+#define T(T) cph_##T
+#endif // __cplusplus
+
+#include <stdbool.h>
+
+typedef struct T(Rect) {
+	int x, y, w, h;
+} T(Rect);
+
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely);	
+bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 #ifdef CPHYC_IMPL
 
-void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely) {
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely) {
 	Rect r = *rect;
 
 	r.x += velx;
@@ -74,7 +82,7 @@ void moveAndCollide(Rect* rect, Rect tiles[], int tilesLen, int velx, int vely) 
 	*rect = r;
 }
 
-bool isOnFloor(Rect rect, Rect tiles[], int tilesLen) {
+bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	Rect r = (Rect) {rect.x, rect.y + rect.h, rect.w, 1};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
@@ -83,7 +91,7 @@ bool isOnFloor(Rect rect, Rect tiles[], int tilesLen) {
 	return false;
 }
 
-bool isOnCeiling(Rect rect, Rect tiles[], int tilesLen) {
+bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	Rect r = (Rect) {rect.x, rect.y - 1, rect.w, 1};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
@@ -92,7 +100,7 @@ bool isOnCeiling(Rect rect, Rect tiles[], int tilesLen) {
 	return false;
 }
 
-bool isOnWall(Rect rect, Rect tiles[], int tilesLen) {
+bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	Rect r = (Rect) {rect.x - 1, rect.y, rect.w + 2, rect.h};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
@@ -102,5 +110,10 @@ bool isOnWall(Rect rect, Rect tiles[], int tilesLen) {
 }
 
 #endif // CPHYC_IMPL
+
+#ifdef __cplusplus
+}}
+#endif
+
 #endif // CPHYC_H
 
