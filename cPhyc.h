@@ -57,7 +57,7 @@ bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 #ifdef CPHYC_IMPL
 
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely) {
-	Rect r = *rect;
+	T(Rect) r = *rect;
 
 	r.x += velx;
 	for (int t = 0; t < tilesLen; t++) {
@@ -83,7 +83,7 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx,
 }
 
 bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	Rect r = (Rect) {rect.x, rect.y + rect.h, rect.w, 1};
+	T(Rect) r = (T(Rect)) {rect.x, rect.y + rect.h, rect.w, 1};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
 			return true;
@@ -92,7 +92,7 @@ bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 }
 
 bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	Rect r = (Rect) {rect.x, rect.y - 1, rect.w, 1};
+	T(Rect) r = (T(Rect)) {rect.x, rect.y - 1, rect.w, 1};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
 			return true;
@@ -101,7 +101,7 @@ bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 }
 
 bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	Rect r = (Rect) {rect.x - 1, rect.y, rect.w + 2, rect.h};
+	T(Rect) r = (T(Rect)) {rect.x - 1, rect.y, rect.w + 2, rect.h};
 	for (int t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
 			return true;
@@ -114,6 +114,8 @@ bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 #ifdef __cplusplus
 }}
 #endif
+
+#undef T
 
 #endif // CPHYC_H
 
