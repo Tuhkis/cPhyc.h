@@ -1,9 +1,9 @@
 /*
  * File: cPhyc.h
  * Author: Nico Lindström
- * Copyright: (c) 2022 Nico Lindström 
+ * Copyright: (c) 2022-2023 Nico Lindström 
  * 
- * This is a header only library for AABB based physics
+ * This is a header only library for AABB based physics that is compatible with C and C++.
  *
  *
  * Documentation:
