@@ -47,7 +47,7 @@ extern "C" {
 #include <stdbool.h>
 
 typedef struct T(Rect) {
-	int x, y, w, h;
+	float x, y, w, h;
 } T(Rect);
 
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely);	
