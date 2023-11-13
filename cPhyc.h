@@ -50,13 +50,13 @@ typedef struct T(Rect) {
 	float x, y, w, h;
 } T(Rect);
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely);	
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely);	
 bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 #ifdef CPHYC_IMPL
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, int velx, int vely) {
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely) {
 	T(Rect) r = *rect;
 
 	r.x += velx;
