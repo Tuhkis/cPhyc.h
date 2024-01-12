@@ -3,7 +3,8 @@
  * Author: Nico Lindström
  * Copyright: (c) 2022-2023 Nico Lindström 
  * 
- * This is a header only library for AABB based physics that is compatible with C and C++.
+ * This is a header only library for AABB based physics
+ * that is compatible with C and C++.
  *
  *
  * Documentation:
@@ -36,31 +37,35 @@
 
 #define collideRect(rect1, rect2) rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h
 
+#define CPH_TRUE (1)
+#define CPH_FALSE (0)
+
 #ifdef __cplusplus
 #define T(T) T
 namespace cph {
 extern "C" {
 #else
 #define T(T) cph_##T
-#endif // __cplusplus
+#endif /* __cplusplus */
 
-#include <stdbool.h>
+typedef unsigned char T(Bool);
 
 typedef struct T(Rect) {
 	float x, y, w, h;
 } T(Rect);
 
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely);	
-bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
-bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
-bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 #ifdef CPHYC_IMPL
 
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely) {
 	T(Rect) r = *rect;
+  int t;
 
 	r.x += velx;
-	for (int t = 0; t < tilesLen; t++) {
+	for (t = 0; t < tilesLen; t++) {
 		if ( collideRect(r, tiles[t]) ) {
 			if ( velx > 0 )
 				r.x = tiles[t].x - r.w;
@@ -70,7 +75,7 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float vel
 	}
 
 	r.y += vely;
-	for (int t = 0; t < tilesLen; t++) {
+	for (t = 0; t < tilesLen; t++) {
 		if ( collideRect(r, tiles[t]) ) {
 			if ( vely > 0 )
 				r.y = tiles[t].y - r.h;
@@ -82,34 +87,37 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float vel
 	*rect = r;
 }
 
-bool T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
+T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	T(Rect) r = (T(Rect)) {rect.x, rect.y + rect.h, rect.w, 1};
-	for (int t = 0; t < tilesLen; t++) {
+  int t;
+	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return true;
+			return CPH_TRUE;
 	}
-	return false;
+	return CPH_FALSE;
 }
 
-bool T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
+T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	T(Rect) r = (T(Rect)) {rect.x, rect.y - 1, rect.w, 1};
-	for (int t = 0; t < tilesLen; t++) {
+  int t;
+	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return true;
+			return CPH_TRUE;
 	}
-	return false;
+	return CPH_FALSE;
 }
 
-bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
+T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 	T(Rect) r = (T(Rect)) {rect.x - 1, rect.y, rect.w + 2, rect.h};
-	for (int t = 0; t < tilesLen; t++) {
+  int t;
+	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return true;
+			return CPH_TRUE;
 	}
-	return false;
+	return CPH_FALSE;
 }
 
-#endif // CPHYC_IMPL
+#endif /* CPHYC_IMPL */
 
 #ifdef __cplusplus
 }}
@@ -117,5 +125,5 @@ bool T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
 
 #undef T
 
-#endif // CPHYC_H
+#endif /* CPHYC_H */
 
