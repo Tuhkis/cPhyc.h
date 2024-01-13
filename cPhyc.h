@@ -34,7 +34,6 @@
  *
  */
 
-#pragma once
 #ifndef CPHYC_H
 #define CPHYC_H
 
