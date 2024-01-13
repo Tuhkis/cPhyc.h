@@ -9,14 +9,16 @@
  *
  * Documentation:
  *   Types:
+ *     Bool
+ *       If you don't know what this is you should learn programming. Possible values TRUE and FALSE.
+ *
  *     Rect
  *       A rectangle structure that stores its position and dimensions as 32 bit ints.
  *
- *   Macros:
- *     collideRect(rect1, rect2)
- *       Checks whetever two Rect's overlap.
- *
  *   Methods:
+ *     collideRect(rect1, rect2)
+ *       Checks if two Rect's overlap.
+ *
  *     moveAndCollide(rect, tiles, tilesLen, velx, vely)
  *       Moves provided Rect pointer by velx and vely and will not go through tiles, provided tilesLen (The length of the tiles array) is provided.
  *
@@ -35,8 +37,6 @@
 #ifndef CPHYC_H
 #define CPHYC_H
 
-#define collideRect(rect1, rect2) rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h
-
 #ifdef __cplusplus
 #define T(T) T
 namespace cph {
@@ -54,22 +54,45 @@ typedef struct T(Rect) {
 extern const T(Bool) T(TRUE);
 extern const T(Bool) T(FALSE);
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely);
-T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
-T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
-T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned inttilesLen, float velx, float vely);
+T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
+T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
+T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
+
+/* Inline collision detection if supported. (Not a part of c89) */
+#ifdef inline
+#ifdef __cplusplus
+#define INLINE inline
+#else
+#define INLINE static inline
+#endif /* __cplusplus */
+INLINE T(Bool) T(collideRect) (T(Rect) rect1, T(Rect) rect2) {
+  return rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h;
+}
+#undef INLINE
+#else
+T(Bool) T(collideRect) (T(Rect) rect1, T(Rect) rect2);
+#endif /* inline */
+
 #ifdef CPHYC_IMPL
 
 const T(Bool) T(TRUE) = 1;
 const T(Bool) T(FALSE) = 0;
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely) {
+/* Work even if inlining isn't allowed. */
+#ifndef inline
+T(Bool) T(collideRect) (T(Rect) rect1, T(Rect) rect2) {
+  return rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h;
+}
+#endif /* inline */
+
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned int tilesLen, float velx, float vely) {
 	T(Rect) r = *rect;
-  int t;
+  unsigned int t;
 
 	r.x += velx;
 	for (t = 0; t < tilesLen; t++) {
-		if ( collideRect(r, tiles[t]) ) {
+		if ( T(collideRect) (r, tiles[t]) ) {
 			if ( velx > 0 )
 				r.x = tiles[t].x - r.w;
 			else if (velx < 0)
@@ -79,7 +102,7 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float vel
 
 	r.y += vely;
 	for (t = 0; t < tilesLen; t++) {
-		if ( collideRect(r, tiles[t]) ) {
+		if ( T(collideRect) (r, tiles[t]) ) {
 			if ( vely > 0 )
 				r.y = tiles[t].y - r.h;
 			else if (vely < 0)
@@ -90,31 +113,40 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float vel
 	*rect = r;
 }
 
-T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	T(Rect) r = (T(Rect)) {rect.x, rect.y + rect.h, rect.w, 1};
-  int t;
+T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen) {
+  unsigned int t;
+
+	rect.y += rect.h;
+	rect.h = 1;
+
 	for (t = 0; t < tilesLen; t++) {
-		if (collideRect(r, tiles[t]))
+		if (T(collideRect) (rect, tiles[t]))
 			return T(TRUE);
 	}
 	return T(FALSE);
 }
 
-T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	T(Rect) r = (T(Rect)) {rect.x, rect.y - 1, rect.w, 1};
-  int t;
+T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen) {
+  unsigned int t;
+
+  --rect.y;
+  rect.h = 1;
+
 	for (t = 0; t < tilesLen; t++) {
-		if (collideRect(r, tiles[t]))
+		if (T(collideRect) (rect, tiles[t]))
 			return T(TRUE);
 	}
 	return T(FALSE);
 }
 
-T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
-	T(Rect) r = (T(Rect)) {rect.x - 1, rect.y, rect.w + 2, rect.h};
-  int t;
+T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen) {
+  unsigned int t;
+
+	--rect.x;
+	rect.w += 2;
+
 	for (t = 0; t < tilesLen; t++) {
-		if (collideRect(r, tiles[t]))
+		if (T(collideRect) (rect, tiles[t]))
 			return T(TRUE);
 	}
 	return T(FALSE);
