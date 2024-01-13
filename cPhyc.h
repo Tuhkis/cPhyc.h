@@ -1,10 +1,10 @@
 /*
  * File: cPhyc.h
  * Author: Nico Lindström
- * Copyright: (c) 2022-2023 Nico Lindström 
- * 
+ * Copyright: (c) 2022-2024 Nico Lindström
+ *
  * This is a header only library for AABB based physics
- * that is compatible with C and C++.
+ * that is compatible with C89 and C++.
  *
  *
  * Documentation:
@@ -37,9 +37,6 @@
 
 #define collideRect(rect1, rect2) rect1.x + rect1.w > rect2.x && rect1.x < rect2.x + rect2.w && rect1.y + rect1.h > rect2.y && rect1.y < rect2.y + rect2.h
 
-#define CPH_TRUE (1)
-#define CPH_FALSE (0)
-
 #ifdef __cplusplus
 #define T(T) T
 namespace cph {
@@ -54,11 +51,17 @@ typedef struct T(Rect) {
 	float x, y, w, h;
 } T(Rect);
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely);	
+extern const T(Bool) T(TRUE);
+extern const T(Bool) T(FALSE);
+
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely);
 T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen);
 #ifdef CPHYC_IMPL
+
+const T(Bool) T(TRUE) = 1;
+const T(Bool) T(FALSE) = 0;
 
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], int tilesLen, float velx, float vely) {
 	T(Rect) r = *rect;
@@ -92,9 +95,9 @@ T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
   int t;
 	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return CPH_TRUE;
+			return T(TRUE);
 	}
-	return CPH_FALSE;
+	return T(FALSE);
 }
 
 T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
@@ -102,9 +105,9 @@ T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
   int t;
 	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return CPH_TRUE;
+			return T(TRUE);
 	}
-	return CPH_FALSE;
+	return T(FALSE);
 }
 
 T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
@@ -112,9 +115,9 @@ T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], int tilesLen) {
   int t;
 	for (t = 0; t < tilesLen; t++) {
 		if (collideRect(r, tiles[t]))
-			return CPH_TRUE;
+			return T(TRUE);
 	}
-	return CPH_FALSE;
+	return T(FALSE);
 }
 
 #endif /* CPHYC_IMPL */
