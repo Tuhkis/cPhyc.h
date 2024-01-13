@@ -1,48 +1,55 @@
 /*
- * File: cPhyc.h
- * Author: Nico Lindström
- * Copyright: (c) 2022-2024 Nico Lindström
- *
- * This is a header only library for AABB based physics
- * that is compatible with C89 and C++.
- *
- *
- * Documentation:
- *   Types:
- *     Bool
- *       If you don't know what this is you should learn programming. Possible values TRUE and FALSE.
- *
- *     Rect
- *       A rectangle structure that stores its position and dimensions as 32 bit ints.
- *
- *   Methods:
- *     collideRect(rect1, rect2)
- *       Checks if two Rect's overlap.
- *
- *     moveAndCollide(rect, tiles, tilesLen, velx, vely)
- *       Moves provided Rect pointer by velx and vely and will not go through tiles, provided tilesLen (The length of the tiles array) is provided.
- *
- *     isOnFloor(rect, tiles, tilesLen)
- *       Returns a bool if the rect is right ontop of any of the tiles.
- *
- *     isOnCeiling(rect, tiles, tilesLen)
- *       Returns a bool if the rect is right under of any of the tiles.
- *
- *     isOnWall(rect, tiles, tilesLen)
- *       Returns a bool if the rect is right next to any of the tiles.
- *
+ | File: cPhyc.h
+ | Author: Nico Lindström
+ | Copyright: (c) 2022-2024 Nico Lindström
+ |
+ | This is a header only library for AABB based physics
+ | that is compatible with C89 and C++.
+ |
+ | ------------------------------------------------------
+ |
+ | Documentation:
+ |   Types:
+ |     Bool
+ |       If you don't know what this is you should learn programming. Possible values TRUE and FALSE.
+ |
+ |     Rect
+ |       A rectangle structure that stores its position and dimensions as 32 bit ints.
+ |
+ |   Methods:
+ |     collideRect(rect1, rect2)
+ |       Checks if two Rect's overlap.
+ |
+ |     moveAndCollide(rect, tiles, tilesLen, velx, vely)
+ |       Moves provided Rect pointer by velx and vely and will not go through tiles, provided tilesLen (The length of the tiles array) is provided.
+ |
+ |     isOnFloor(rect, tiles, tilesLen)
+ |       Returns a bool if the rect is right ontop of any of the tiles.
+ |
+ |     isOnCeiling(rect, tiles, tilesLen)
+ |       Returns a bool if the rect is right under of any of the tiles.
+ |
+ |     isOnWall(rect, tiles, tilesLen)
+ |       Returns a bool if the rect is right next to any of the tiles.
+ |
  */
 
 #pragma once
 #ifndef CPHYC_H
 #define CPHYC_H
 
+#ifdef T
+#warning T already defined. Will overwrite.
+#undef T
+#endif /* T */
 #ifdef __cplusplus
 #define T(T) T
+#define NULLPTR nullptr
 namespace cph {
 extern "C" {
 #else
 #define T(T) cph_##T
+#define NULLPTR ((void*)0)
 #endif /* __cplusplus */
 
 typedef unsigned char T(Bool);
@@ -89,6 +96,8 @@ T(Bool) T(collideRect) (T(Rect) rect1, T(Rect) rect2) {
 void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned int tilesLen, float velx, float vely) {
 	T(Rect) r = *rect;
   unsigned int t;
+
+	if (rect == NULLPTR) return;
 
 	r.x += velx;
 	for (t = 0; t < tilesLen; t++) {
@@ -159,6 +168,7 @@ T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen) {
 #endif
 
 #undef T
+#undef NULLPTR
 
 #endif /* CPHYC_H */
 
