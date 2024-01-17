@@ -43,12 +43,12 @@
 #endif /* T */
 #ifdef __cplusplus
 #define T(T) T
-#define CPH_NULLPTR nullptr
+#define cph_nullptr nullptr
 namespace cph {
 extern "C" {
 #else
 #define T(T) cph_##T
-#define CPH_NULLPTR ((void*)0)
+extern const void* cph_nullptr;
 #endif /* __cplusplus */
 
 typedef unsigned char T(Bool);
@@ -60,10 +60,10 @@ typedef struct T(Rect) {
 extern const T(Bool) T(TRUE);
 extern const T(Bool) T(FALSE);
 
-void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned inttilesLen, float velx, float vely);
-T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
-T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
-T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned inttilesLen);
+void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned int tilesLen, float velx, float vely);
+T(Bool) T(isOnFloor) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen);
+T(Bool) T(isOnCeiling) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen);
+T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen);
 
 /* Inline collision detection if supported. (Not a part of c89) */
 #ifdef inline
@@ -84,6 +84,10 @@ T(Bool) T(collideRect) (T(Rect) rect1, T(Rect) rect2);
 
 const T(Bool) T(TRUE) = 1;
 const T(Bool) T(FALSE) = 0;
+#ifndef __cplusplus
+const void* cph_nullptr = (void*)0;
+#define CPH_NULLPTR _cph_nullptr
+#endif /* __cplusplus */
 
 /* Work even if inlining isn't allowed. */
 #ifndef inline
@@ -96,7 +100,7 @@ void T(moveAndCollide) (T(Rect) * rect, T(Rect) tiles[], unsigned int tilesLen, 
 	T(Rect) r = *rect;
   unsigned int t;
 
-	if (rect == CPH_NULLPTR) return;
+	if (rect == cph_nullptr) return;
 
 	r.x += velx;
 	for (t = 0; t < tilesLen; t++) {
@@ -167,7 +171,6 @@ T(Bool) T(isOnWall) (T(Rect) rect, T(Rect) tiles[], unsigned int tilesLen) {
 #endif
 
 #undef T
-#undef CPH_NULLPTR
 
 #endif /* CPHYC_H */
 
